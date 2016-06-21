@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Games";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+            <h2>
+                Games
+                @Html.ActionLink("New Game", "New", "Games", null, new { @class = "btn btn-default pull-right" })
+            </h2>
+            <table id="games" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Games</th>
+                    <th>Genre</th>
+                    <th>Number Available</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document)
+            .ready(function () {
+                var table = $("#games")
+                    .DataTable({
+                        aLengthMenu: [[3, 6, 10, -1], [3, 6, 10, "All"]],
+                        iDisplayLength: -1,
+                        ajax: {
+                            url: "/api/games/",
+                            dataSrc: ""
+                        },
+                        order: [[2, "asc"]],
+                        createdRow: function (row, data) {
+                            if (data.numberAvailable === 0) 
+                                $(row).addClass('danger');
+                            else if (data.numberAvailable <= 10)
+                                $(row).addClass('warning');
+                        },
+                        aoColumnDefs: [{ "bSortable": false, "aTargets": [3, 4] }],
+                        columns: [
+                            {
+                                data: "name",
+                                render: function (data, type, game) {
+                                    return"<a href='/games/details/" + game.id + "'>" + game.name + "</a>";
+                                }
+                            },
+                            {
+                                data: "genre.name"
+                            },
+                            {
+                                data: "numberAvailable"
+                            },
+                            {
+                                data: "name",
+                                render: function (data, type, game) {
+                                    return "<a href='/games/edit/" + game.id + "'><i class='glyphicon glyphicon-edit'></i></a>";
+                                }
+                            },
+                            {
+                                data: "id",
+                                render: function (data) {
+                                    return "<a class='js-delete' data-game-id=" + data + "><i class='glyphicon glyphicon-remove'></i></a>";
+                                }
+                            }
+                        ]
+
+                    });
+
+                $("#games").on("click", ".js-delete", function () {
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this game?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/games/" + button.attr("data-game-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+    </script>
+}
+

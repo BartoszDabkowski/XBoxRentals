@@ -1,0 +1,124 @@
+﻿@model XBoxRentals.ViewModels.GameFormViewModel
+@{
+    ViewBag.Title = "GameForm";
+}
+
+@using (Html.BeginForm("Save", "Games", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-8">
+                        <h2 class="panel-title">@Model.Title</h2>
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="form-group">
+                                    @Html.LabelFor(g => g.Name)
+                                    @Html.TextBoxFor(g => g.Name, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(g => g.Name)
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.GenreId)
+                                    @Html.DropDownListFor(m => m.GenreId, new SelectList(Model.Genres, "Id", "Name"), "Select a genre...", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.GenreId)
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.RatingId)
+                                    @Html.DropDownListFor(m => m.RatingId, new SelectList(Model.Ratings, "Id", "Name"), "Select a rating...", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.RatingId)
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(g => g.ReleaseDate)
+                                    <div id="datepicker" class="input-group date">
+                                        @Html.TextBoxFor(g => g.ReleaseDate, new { @class = "form-control", @id = "datepicker-value" })
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    @Html.ValidationMessageFor(g => g.ReleaseDate)
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <br />
+                                <img src="" id="image" class="center-block img-responsive" width="215" height="294" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="form-group">
+                                    @Html.LabelFor(g => g.NumberInStock)
+                                    @Html.TextBoxFor(g => g.NumberInStock, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(g => g.NumberInStock)
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                
+                                <label class="btn btn-default btn-file center-block">
+                                    Upload Image<input type="file" 
+                                                       name="@Html.NameFor(g => g.File)"
+                                                       id="file"
+                                                       style="display: none;"
+                                                       data-rule-validImage="true"/>
+                                </label>
+                                @Html.ValidationMessageFor(g => g.File)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(g => g.Summary)
+                                    @Html.TextAreaFor(g => g.Summary, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(g => g.Summary)
+                                </div>
+
+                                @Html.HiddenFor(g => g.Id)
+                                @Html.HiddenFor(g => g.ImageId)
+                                @Html.AntiForgeryToken()
+                                <button type="submit"class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+}
+
+@{
+    var imgSrc = "";
+    if (Model.Title == "Edit Game")
+    {
+        var base64 = Convert.ToBase64String(Model.Image.Bytes);
+        imgSrc = $"data:image/gif;base64,{base64}";
+    }
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(function() {
+            $("#image").attr("src", "@imgSrc");
+
+            $('#datepicker').datetimepicker({
+                format: "MMM DD, YYYY"
+            });
+
+            var date = "@Model.ReleaseDate.ToString("MMM dd yyyy")";
+
+            if (date !== "Jan 01 0001")
+                $('#datepicker-value').val(date);
+
+            $("#file").change(function() {
+                readURL(this);
+            });
+        });
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#image').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
+

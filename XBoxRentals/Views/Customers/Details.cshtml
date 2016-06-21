@@ -1,0 +1,10 @@
+﻿@model XBoxRentals.Models.Customer
+
+@{
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Name</h2>
+<h3>Date of Birth: @Model.BirthDate.ToString("dd MMM, yyyy")</h3>
+<h3>Membership Type: @Model.MembershipType.Name</h3>

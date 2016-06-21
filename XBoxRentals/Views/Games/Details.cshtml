@@ -1,0 +1,47 @@
+﻿@model XBoxRentals.Models.Game
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-9">
+            <div class="well">
+                <div class="media">
+                    <div class="media-left media-middle">
+                        @{
+                            var base64 = Convert.ToBase64String(Model.Image.Bytes);
+                            var imgSrc = $"data:image/gif;base64,{base64}";
+                        }
+                        <img src="@imgSrc"/> 
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">@Model.Name</h4>
+                        <div class="container-fluid">
+                            <div class="row">
+                                @Model.Summary
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-8"><b>Rating:</b> @Model.Rating.Name</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-8"><b>Genre:</b> @Model.Genre.Name</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4 col-xs-offset-8"><b>Release Date:</b> @Model.ReleaseDate.ToString("MMM dd, yyyy")</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6"><h4>Number in Stock: @Model.NumberInStock</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

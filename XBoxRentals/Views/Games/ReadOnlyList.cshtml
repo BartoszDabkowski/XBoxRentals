@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "Games";
+    Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <h2>
+                Games
+            </h2>
+            <table id="games" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Games</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document)
+            .ready(function () {
+                var table = $("#games")
+                    .DataTable({
+                        aLengthMenu: [[3, 6, 10, -1], [3, 6, 10, "All"]],
+                        iDisplayLength: 3,
+                        ajax: {
+                            url: "/api/games/",
+                            dataSrc: ""
+                        },
+                        columns: [
+                        {
+                            data: "name",
+                            render: function (data, type, game) {
+                                return "<img class='center-block' src='data:image/jpg;base64," + game.image.bytes + "' width='100' height='139'/>" +
+                                    "<center><a href='/games/details/" + game.id + "'>" + game.name + "</a></center>";
+                            }
+                        },
+                        {
+                            data: "summary",
+                            render: function (data, type, game) {
+                                return "<h4>" + game.genre.name + "</h4>" + game.summary;
+                            }
+                        }
+                        ]
+                    });
+
+                $("#games").on("click", ".js-delete", function () {
+                    var button = $(this);
+                    bootbox.confirm("Are you sure you want to delete this game?", function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/games/" + button.attr("data-game-id"),
+                                method: "DELETE",
+                                success: function () {
+                                    table.row(button.parents("tr")).remove().draw();
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+    </script>
+}
+

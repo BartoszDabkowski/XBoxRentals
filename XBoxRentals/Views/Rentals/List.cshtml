@@ -1,0 +1,126 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Rentals";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <h2>
+                Rental History
+                @Html.ActionLink("New Rental", "New", "Rentals", null, new { @class = "btn btn-default pull-right" })
+            </h2>
+            <table id="rentals" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Game</th>
+                        <th>Date Rented</th>
+                        <th>Date Returned</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+                var table = $("#rentals")
+                    .DataTable({
+                        aLengthMenu: [[50, 100, 250, -1], [50, 100, 250, "All"]],
+                        iDisplayLength: -1,
+                        order: [[3, "asc"],[2, "asc"]],
+                        createdRow: function (row, data) {
+                            var date = DateDifference(new Date(data.dateRented));
+                            if (data.dateReturned == null) {
+                                if (date === 2)
+                                    $(row).addClass('danger');
+                                else if (date === 1)
+                                    $(row).addClass('warning');
+                            }
+                            if (data.dateReturned != null)
+                                $(row).addClass('info');
+                        },
+                        ajax: {
+                            url: "/api/rentals/",
+                            dataSrc: ""
+                        },
+                        columns: [
+                            {
+                                data: "customer.name"
+                            },
+                            {
+                                data: "game.name"
+                            },
+                            {
+                                data: "dateRented",
+                                render: function(data) {
+                                    return DateTimeToDateJs(data);
+                                }
+                            },
+                            {
+                                data: "id",
+                                render: function (data, type, rental) {
+                                    if (rental.dateReturned != null)
+                                        return DateTimeToDateJs(rental.dateReturned);
+
+                                    return "<a class='js-addDate' data-game-id=" + data + "><i class='glyphicon glyphicon-ok'></i></a>";
+
+                                }
+                            }
+                        ]
+                    });
+            });
+
+            $("#rentals").on("click",".js-addDate", function() {
+                var button = $(this);
+                console.log(button.attr("data-game-id"));
+                $.ajax({
+                    url: "/api/rentals/" + button.attr("data-game-id"),
+                    method: "PUT",
+                    success: function () {
+                        button.parents("td").append(moment().format('MMM DD, YYYY'));
+                        button.parents("td").parents("tr").addClass("success").removeClass('danger').removeClass('warning');
+                        button.remove();
+                    }
+                });
+            });
+            
+        function DateTimeToDateJs(date) {
+            var months = [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+            var jsDate = moment(moment(date)).format('MMM DD, YYYY');
+
+            return jsDate;
+        };
+
+        var RENTED_STATUS = {
+            'ON_TIME': 0,
+            'PAST_3_DAYS': 1,
+            'PAST_5_DAYS': 2
+        }
+
+        function DateDifference(dateRented) {
+            dateRented = moment(dateRented);
+            var diffInDays = (moment() - dateRented) / 86400000;
+
+            if (diffInDays > 5)
+                return RENTED_STATUS.PAST_5_DAYS;
+            else if (diffInDays > 3)
+                return RENTED_STATUS.PAST_3_DAYS;
+            else 
+                return RENTED_STATUS.ON_TIME;
+        };
+    </script>
+}
+
+
+
+
