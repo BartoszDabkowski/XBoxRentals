@@ -1,15 +1,33 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "About";
 }
-
-<div class="jumbotron">
-    <h1>XBox Rentals</h1>
-    <p>XBox Rentals is a web application designed as a mock in-store game and rental tracker</p>
-</div>
+<h2>@ViewBag.Title</h2>
 
 <div class="row">
-    Login as admin with
-    Username: admin@domain.com
-    Password: Xbox@Rentals1
-    <a href="http://www.codingeverything.com/2014/05/mvcbootstrapactivenavbar.html">active</a>
+    <div class="well col-sm-5">
+        <h3>User Stories</h3>
+        <p>Xbox Rentals is an in-store game rental web application that keeps track of games, customers, and game rentals.
+            <br/>
+            <br/>
+            Users should be able to view all of the games available and the relevant details associated with the games.
+            <br/>
+            <br/>
+            Managers should be able to add new games and edit/delete current games.
+            <br/>
+            <br/>
+            Managers should be able to add new customers and edit/delete current customers.
+            <br/>
+            <br/>
+            Additionally managers should be able to allow customers to rent multiple games and managers should have the ability to update the database when games are returned.
+        </p>
+    </div>
+    <div class="well col-sm-5 col-sm-offset-1">
+        <p>
+            <h3>Login as Manager</h3>
+            <b>Username:</b> admin@domain.com
+            <br/>
+            <b>Password:</b> Xbox@Rentals1
+        </p>
+    </div>
 </div>
+

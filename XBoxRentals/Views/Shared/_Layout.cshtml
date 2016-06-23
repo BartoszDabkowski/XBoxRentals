@@ -27,7 +27,7 @@
                     <li>@Html.ActionLink("Customers", "List", "Customers")</li>
                     <li>@Html.ActionLink("Rentals", "List", "Rentals")</li>
                 }
-                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                <li>@Html.ActionLink("About", "Index", "Home")</li>
             </ul>
             @Html.Partial("_LoginPartial")
         </div>
@@ -46,3 +46,20 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+<script type="text/javascript">
+     $(document).ready(function () {
+         var url = window.location;
+         $('ul.nav li a').each(function () {
+             if (this.href === url) {
+                 $("ul.nav li").each(function () {
+                     if ($(this).hasClass("active")) {
+                         $(this).removeClass("active");
+                     }
+                 });
+                 $(this).parent().parent().parent().addClass('active');
+                 $(this).parent().addClass('active');
+             }
+         });
+     });
+</script>

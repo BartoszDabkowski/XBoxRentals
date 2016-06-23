@@ -20,7 +20,7 @@
 input,
 select,
 textarea {
-    max-width: 100%;
+    max-width: 280px;
 }
 
 
@@ -40,4 +40,8 @@ label.error,
 .glyphicon-eye-close,
 .glyphicon-eye-open {
     font-size: 20px;
+}
+
+.max-width {
+    max-width: 100%;
 }
